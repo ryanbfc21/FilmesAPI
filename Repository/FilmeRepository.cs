@@ -1,15 +1,40 @@
-﻿using FilmesAPI.Models;
+﻿using FilmesAPI.Data;
+using FilmesAPI.Models;
 using Newtonsoft.Json;
 
 namespace FilmesAPI.Repository
 {
     public class FilmeRepository
     {
+
+        private FilmeContext _context;
+
+        public FilmeRepository(FilmeContext context)
+        {
+            _context = context;
+        }
+
+        public FilmeRepository()
+        {
+
+        }
+
         static readonly string nomeArquivo = "Filmes.json";
         static readonly string diretorio = @"C:\Users\ryanb\Área de Trabalho";
         static readonly string caminhoArquivo = Path.Combine(diretorio, nomeArquivo);
 
+        public void GravarFilme(Filme filme)
+        {
+            _context.Filmes.Add(filme);
+            _context.SaveChanges();
+        }
+
         public List<Filme> ListFilmes()
+        {
+            return _context.Filmes.ToList();
+        }
+
+        public List<Filme> ListFilmesJson()
         {
             List<Filme> filmes = new List<Filme>();
 
@@ -33,11 +58,11 @@ namespace FilmesAPI.Repository
             return filmes;
         }
 
-        public Filme GravarFilme(Filme filme)
+        public Filme GravarFilmeJson(Filme filme)
         {
             FilmeRepository filmeRepository = new FilmeRepository();
 
-            var filmes = filmeRepository.ListFilmes();
+            var filmes = filmeRepository.ListFilmesJson();
             filme.Id = filmeRepository.GetLastFilmeId(filmes) + 1;
 
             filmes.Add(filme);
@@ -67,14 +92,8 @@ namespace FilmesAPI.Repository
         {
             FilmeRepository filmeRepository = new FilmeRepository();
 
-            var filmes = filmeRepository.ListFilmes();
+                return _context.Filmes.FirstOrDefault(x => x.Id == id);
 
-            if (filmes.Count > 0)
-            {
-                return filmes.FirstOrDefault(x => x.Id == id);
-            }
-
-            return null;
         }
 
     }

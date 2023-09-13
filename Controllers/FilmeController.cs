@@ -1,4 +1,5 @@
-﻿using FilmesAPI.Models;
+﻿using FilmesAPI.Data;
+using FilmesAPI.Models;
 using FilmesAPI.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -12,12 +13,20 @@ namespace FilmesAPI.Controllers
     [Route("[controller]")]
     public class FilmeController : ControllerBase
     {
+
+        private FilmeContext _context;
+
+        public FilmeController(FilmeContext context)
+        {
+            _context = context;
+        }
+
         [HttpPost]
         public IActionResult AdicionaFilme([FromBody] Filme filme)
         {
-            FilmeRepository filmeRepository = new FilmeRepository();
+            FilmeRepository filmeRepository = new FilmeRepository(_context);
 
-            filme = filmeRepository.GravarFilme(filme);
+            filmeRepository.GravarFilme(filme);
             return CreatedAtAction(nameof(RecuperaFilmePorId), new {id = filme.Id}, filme);
 
         }
@@ -25,14 +34,14 @@ namespace FilmesAPI.Controllers
         [HttpGet]
         public IEnumerable<Filme> RecuperaFilmes([FromQuery] int skip = 0, [FromQuery] int take = 1000)
         {
-            FilmeRepository filmeRepository = new FilmeRepository();
+            FilmeRepository filmeRepository = new FilmeRepository(_context);
             return filmeRepository.ListFilmes().Skip(skip).Take(take);
         }
 
         [HttpGet("{id}")]
         public IActionResult RecuperaFilmePorId(int id)
         {
-            FilmeRepository filmeRepository = new FilmeRepository();
+            FilmeRepository filmeRepository = new FilmeRepository(_context);
             var filme = filmeRepository.FindFilmePorId(id);
 
             if (filme != null)
