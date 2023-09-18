@@ -39,10 +39,11 @@ namespace FilmesAPI.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Filme> RecuperaFilmes([FromQuery] int skip = 0, [FromQuery] int take = 1000)
+        public IEnumerable<ReadFilmeDto> RecuperaFilmes([FromQuery] int skip = 0, [FromQuery] int take = 1000)
         {
             FilmeRepository filmeRepository = new FilmeRepository(_context);
-            return filmeRepository.ListFilmes().Skip(skip).Take(take);
+            var filmes = filmeRepository.ListFilmes().Skip(skip).Take(take);
+            return _mapper.Map<List<ReadFilmeDto>>(filmes);
         }
 
         [HttpGet("{id}")]
@@ -53,7 +54,8 @@ namespace FilmesAPI.Controllers
 
             if (filme != null)
             {
-                return Ok(filme);
+                var filmeDto = _mapper.Map<ReadFilmeDto>(filme);
+                return Ok(filmeDto);
             }
             else
             {
@@ -103,6 +105,23 @@ namespace FilmesAPI.Controllers
             _context.SaveChanges();
 
             return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeletaFilme(int id)
+        {
+            FilmeRepository filmeRepository = new FilmeRepository(_context);
+            var filme = filmeRepository.FindFilmePorId(id);
+
+            if (filme == null)
+                return NotFound();
+
+            _context.Remove(filme);
+            _context.SaveChanges(true);
+
+            return NoContent();
+
+
         }
 
     }
