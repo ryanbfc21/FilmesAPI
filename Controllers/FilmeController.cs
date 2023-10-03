@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FilmesAPI.Data;
+using FilmesAPI.Data.Dtos.Filme;
 using FilmesAPI.Models;
 using FilmesAPI.Repository;
 using Microsoft.AspNetCore.JsonPatch;

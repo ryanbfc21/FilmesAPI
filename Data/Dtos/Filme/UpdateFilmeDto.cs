@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FilmesAPI.Models;
+namespace FilmesAPI.Data.Dtos.Filme;
 
-public class CreateFilmeDto
+public class UpdateFilmeDto
 {
 
     [Required(ErrorMessage = "O título do filme é obrigatório")]
